@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CoordinatorTaskProject.Models.CoordinatorDb
+namespace CoordinatorTaskProject.DTO
 {
-    public class Update
+    public class UpdateInfoDTO
     {
         public int Id { get; set; }
         public string CurrentRelease { get; set; }
@@ -13,7 +13,7 @@ namespace CoordinatorTaskProject.Models.CoordinatorDb
         public int UpdateNumber { get; set; }
         public string BillingCodeID { get; set; }
         public int AccountID { get; set; }
-        public IEnumerable<Task> Tasks { get; set; }
-
+        public string Name { get; set; }
+        public IEnumerable<TaskData> Tasks { get; set; }
     }
 }

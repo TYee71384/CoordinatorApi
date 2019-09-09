@@ -61,8 +61,8 @@ namespace CoordinatorTaskProject.Data
             var tasks = new List<TaskData>();
             foreach(var task in updateInfo.Tasks)
             {
-                var amsInfo = await amsCtx.AmsTaskMain.FirstOrDefaultAsync(x=> x.TaskID == task.TaskId);
-                var t = new TaskData
+                var amsInfo = await amsCtx.AmsTaskMain.Include(x=> x.AmsTaskText).Include(x=> x.AmsAccountMain).FirstOrDefaultAsync(x=> x.TaskID == task.TaskId);
+                var t = new TaskData()
                 {
                     AssignedTo = amsInfo.AssignedTo,
                     Comment = task.Comment,
@@ -79,9 +79,9 @@ namespace CoordinatorTaskProject.Data
             return tasks;
             }
 
-      public async Task<AmsAccountMain> FindSite(string name)
+      public async Task<AmsAccountMain> FindSite(int accountID)
         {
-            return await amsCtx.amsAccountMain.FirstOrDefaultAsync(s => s.BillingCodeID == name);
+            return await amsCtx.amsAccountMain.FirstOrDefaultAsync(s => s.AccountID == accountID);
         }
 
         public async Task<int> FindSiteId(string name)
@@ -92,15 +92,21 @@ namespace CoordinatorTaskProject.Data
 
         public async Task<int> CheckUpdate(int id, string site)
         {
-            var update = await ctx.Updates.FirstOrDefaultAsync(x => x.UpdateNumber == id && x.SiteMnemonic == site);
+            var update = await ctx.Updates.FirstOrDefaultAsync(x => x.UpdateNumber == id && x.BillingCodeID == site);
             if (update != null)
                 return update.UpdateNumber;
             return 0;
         }
 
-        public async Task<Update> GetUpdateBySiteNameAndUpdateNum(string name, int updatenum)
+        public async Task<string> GetSiteName(int accountId, string billingCode)
         {
-            return await ctx.Updates.FirstOrDefaultAsync(x => x.SiteMnemonic == name && x.UpdateNumber == updatenum);
+            var acct = await amsCtx.amsAccountMain.FirstOrDefaultAsync(x => x.BillingCodeID == billingCode && x.AccountID == accountId);
+            return acct.Name;
+        }
+
+        public async Task<Update> GetUpdateBySiteNameAndUpdateNum(int siteId, int updatenum)
+        {
+            return await ctx.Updates.Include(t=> t.Tasks).FirstOrDefaultAsync(x => x.AccountID == siteId && x.UpdateNumber == updatenum);
         }
 
         public async Task<bool> CheckForDuplicateTask(int taskNum, int updateId)
@@ -129,6 +135,11 @@ namespace CoordinatorTaskProject.Data
         public async  Task<Task> GetTask(int id)
         {
             return await ctx.Tasks.FirstOrDefaultAsync(x => x.TaskId == id);
+        }
+
+        public async Task<IEnumerable<AmsAccountMain>> GetAmsSites()
+        {
+            return await amsCtx.amsAccountMain.Where(x => x.StatusID == "A").OrderBy(x => x.BillingCodeID).ToListAsync();
         }
 
         

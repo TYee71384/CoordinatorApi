@@ -10,6 +10,7 @@ namespace CoordinatorTaskProject.Models.AmsTables
         public int AccountID { get; set; }
         public string BillingCodeID { get; set; }
         public string Name { get; set; }
+        public string StatusID { get; set; }
         public virtual IEnumerable<AmsTaskMain> AmsTaskMain { get; set; }
     }
 }

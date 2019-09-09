@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CoordinatorTaskProject.Migrations
@@ -8,16 +9,18 @@ namespace CoordinatorTaskProject.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Sites",
+                name: "History",
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Mnemonic = table.Column<string>(nullable: true)
+                    FileBy = table.Column<string>(nullable: true),
+                    FileTime = table.Column<DateTime>(nullable: false),
+                    TaskId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Sites", x => x.Id);
+                    table.PrimaryKey("PK_History", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -28,17 +31,13 @@ namespace CoordinatorTaskProject.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CurrentRelease = table.Column<string>(nullable: true),
                     NextUpdate = table.Column<string>(nullable: true),
-                    SiteId = table.Column<int>(nullable: true)
+                    UpdateNumber = table.Column<int>(nullable: false),
+                    BillingCodeID = table.Column<string>(nullable: true),
+                    AccountID = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Updates", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Updates_Sites_SiteId",
-                        column: x => x.SiteId,
-                        principalTable: "Sites",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -48,7 +47,7 @@ namespace CoordinatorTaskProject.Migrations
                     TaskId = table.Column<int>(nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     Comment = table.Column<string>(nullable: true),
-                    UpdateId = table.Column<int>(nullable: true)
+                    UpdateId = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -58,30 +57,25 @@ namespace CoordinatorTaskProject.Migrations
                         column: x => x.UpdateId,
                         principalTable: "Updates",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tasks_UpdateId",
                 table: "Tasks",
                 column: "UpdateId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Updates_SiteId",
-                table: "Updates",
-                column: "SiteId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "History");
+
+            migrationBuilder.DropTable(
                 name: "Tasks");
 
             migrationBuilder.DropTable(
                 name: "Updates");
-
-            migrationBuilder.DropTable(
-                name: "Sites");
         }
     }
 }

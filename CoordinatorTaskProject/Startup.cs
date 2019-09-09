@@ -34,6 +34,7 @@ namespace CoordinatorTaskProject
             services.AddDbContext<CoordinatorContext>(opt => opt.UseMySql(Configuration.GetConnectionString("dbConn")));
             services.AddScoped<ITaskRepository, TaskRepository>();
             services.AddSignalR();
+            services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2).AddJsonOptions(opt => 
             opt.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
         }

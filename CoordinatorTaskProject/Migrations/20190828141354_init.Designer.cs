@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace CoordinatorTaskProject.Migrations
 {
     [DbContext(typeof(CoordinatorContext))]
-    [Migration("20190801191206_updateTable")]
-    partial class updateTable
+    [Migration("20190828141354_init")]
+    partial class init
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,7 +42,7 @@ namespace CoordinatorTaskProject.Migrations
 
                     b.Property<string>("Comment");
 
-                    b.Property<int?>("UpdateId");
+                    b.Property<int>("UpdateId");
 
                     b.HasKey("TaskId");
 
@@ -56,13 +56,13 @@ namespace CoordinatorTaskProject.Migrations
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int>("AccountID");
+
+                    b.Property<string>("BillingCodeID");
+
                     b.Property<string>("CurrentRelease");
 
                     b.Property<string>("NextUpdate");
-
-                    b.Property<int>("SiteId");
-
-                    b.Property<string>("SiteMnemonic");
 
                     b.Property<int>("UpdateNumber");
 
@@ -75,7 +75,8 @@ namespace CoordinatorTaskProject.Migrations
                 {
                     b.HasOne("CoordinatorTaskProject.Models.CoordinatorDb.Update", "Update")
                         .WithMany("Tasks")
-                        .HasForeignKey("UpdateId");
+                        .HasForeignKey("UpdateId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }
